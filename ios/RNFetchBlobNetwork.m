@@ -244,7 +244,8 @@ NSOperationQueue *taskQueue;
         respFile = NO;
     }
 
-    __block NSURLSessionDataTask * task = [session dataTaskWithRequest:req];
+    // __block NSURLSessionDataTask * task = [session dataTaskWithRequest:req];
+    __block NSURLSessionUploadTask * task = [session uploadTaskWithStreamedRequest:req];
     
     [taskTable setObject:@{ @"session" : task, @"isCancelled" : @NO } forKey:taskId];
     [task resume];
