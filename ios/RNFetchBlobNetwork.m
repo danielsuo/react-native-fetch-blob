@@ -551,7 +551,8 @@ NSOperationQueue *taskQueue;
     }
 
 
-    callback(@[ errMsg, rnfbRespType, respStr]);
+//     callback(@[ errMsg, rnfbRespType, respStr]);
+    callback(@[ errMsg, rnfbRespType, [NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]]]);
 
     @synchronized(taskTable, uploadProgressTable, progressTable)
     {
