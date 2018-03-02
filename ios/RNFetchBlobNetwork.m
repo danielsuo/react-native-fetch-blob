@@ -552,7 +552,12 @@ NSOperationQueue *taskQueue;
 
 
 //     callback(@[ errMsg, rnfbRespType, respStr]);
-    callback(@[ errMsg, rnfbRespType, [NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]]]);
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
+    [result setValue:[NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]] forKey:@"status"];
+    [result setObject:((NSHTTPURLResponse *)task.response).allHeaderFields forKey:@"request"];
+    [result setObject:task.response.description forKey:@"response"];
+  
+    callback(@[ errMsg, rnfbRespType, result]);
 
     @synchronized(taskTable, uploadProgressTable, progressTable)
     {
