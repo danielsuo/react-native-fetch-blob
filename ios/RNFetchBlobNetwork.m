@@ -83,6 +83,7 @@ typedef NS_ENUM(NSUInteger, ResponseFormat) {
     ResponseFormat responseFormat;
     BOOL * followRedirect;
     BOOL backgroundTask;
+    BOOL extension;
 }
 
 @end
@@ -175,6 +176,7 @@ NSOperationQueue *taskQueue;
     self.options = options;
     
     backgroundTask = [options valueForKey:@"IOSBackgroundTask"] == nil ? NO : [[options valueForKey:@"IOSBackgroundTask"] boolValue];
+    extension = [options valueForKey:@"IOSAppExtension"] == nil ? NO : [[options valueForKey:@"IOSAppExtension"] boolValue];
     followRedirect = [options valueForKey:@"followRedirect"] == nil ? YES : [[options valueForKey:@"followRedirect"] boolValue];
     isIncrement = [options valueForKey:@"increment"] == nil ? NO : [[options valueForKey:@"increment"] boolValue];
     redirects = [[NSMutableArray alloc] init];
@@ -205,6 +207,11 @@ NSOperationQueue *taskQueue;
     if(backgroundTask)
     {
         defaultConfigObject = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:taskId];
+    }
+    
+    if(extension) {
+        NSString *sharedContainerIdentifier = [options objectForKey:@"sharedContainerIdentifier"] == nil ? @"" : [options objectForKey:@"sharedContainerIdentifier"];
+        [defaultConfigObject setSharedContainerIdentifier:sharedContainerIdentifier];
     }
 
     // set request timeout
