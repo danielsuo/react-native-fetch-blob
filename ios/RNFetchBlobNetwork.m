@@ -215,11 +215,19 @@ NSOperationQueue *taskQueue;
     }
 
     // set request timeout
-    float timeout = [options valueForKey:@"timeout"] == nil ? -1 : [[options valueForKey:@"timeout"] floatValue];
-    if(timeout > 0)
+    float timeoutForRequest = [options valueForKey:@"timeoutForRequest"] == nil ? -1 : [[options valueForKey:@"timeoutForRequest"] floatValue];
+    if(timeoutForRequest > 0)
     {
-        defaultConfigObject.timeoutIntervalForRequest = timeout/1000;
+        defaultConfigObject.timeoutIntervalForRequest = timeoutForRequest/1000;
     }
+    
+    // set resource timeout
+    float timeoutForResource = [options valueForKey:@"timeoutForResource"] == nil ? -1 : [[options valueForKey:@"timeoutForResource"] floatValue];
+    if(timeoutForResource > 0)
+    {
+        defaultConfigObject.timeoutIntervalForResource = timeoutForResource/1000;
+    }
+    
     defaultConfigObject.HTTPMaximumConnectionsPerHost = 10;
     session = [NSURLSession sessionWithConfiguration:defaultConfigObject delegate:self delegateQueue:taskQueue];
     if(path != nil || [self.options valueForKey:CONFIG_USE_TEMP]!= nil)
@@ -560,11 +568,16 @@ NSOperationQueue *taskQueue;
 
 //     callback(@[ errMsg, rnfbRespType, respStr]);
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
-    [result setValue:[NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]] forKey:@"status"];
-    [result setObject:((NSHTTPURLResponse *)task.response).allHeaderFields forKey:@"request"];
-    [result setValue:[NSJSONSerialization JSONObjectWithData:respData options:0 error:nil] forKey:@"response"];
-  
-    callback(@[ errMsg, rnfbRespType, result]);
+    
+    if (error.code == -1001) {
+        [result setValue:[NSNumber numberWithInt:1001] forKey:@"status"];
+        callback(@[ [NSNull null], rnfbRespType, result]);
+    } else {
+        [result setValue:[NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]] forKey:@"status"];
+        [result setObject:((NSHTTPURLResponse *)task.response).allHeaderFields forKey:@"request"];
+        [result setValue:[NSJSONSerialization JSONObjectWithData:respData options:0 error:nil] forKey:@"response"];
+        callback(@[ errMsg, rnfbRespType, result]);
+    }
 
     @synchronized(taskTable, uploadProgressTable, progressTable)
     {
