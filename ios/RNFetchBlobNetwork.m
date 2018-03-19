@@ -570,7 +570,7 @@ NSOperationQueue *taskQueue;
     NSMutableDictionary *result = [[NSMutableDictionary alloc] init];
     
     if (error.code == -1001) {
-        [result setValue:[NSNumber numberWithInt:1001] forKey:@"status"];
+        [result setValue:[NSNumber numberWithInt:498] forKey:@"status"];
         callback(@[ [NSNull null], rnfbRespType, result]);
     } else {
         [result setValue:[NSNumber numberWithLong:[(NSHTTPURLResponse *)task.response statusCode]] forKey:@"status"];
